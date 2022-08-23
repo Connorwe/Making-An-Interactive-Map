@@ -9,18 +9,27 @@ const myMap = {
 	buildMap() {
 		this.map = L.map('map', {
 		center: this.coordinates,
-		zoom: 11,
+		zoom: 14.5,
 		});
-		// add openstreetmap tiles
+		// openstreetmap tiles
 		L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 		attribution:
 			'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-		minZoom: '15',
+		minZoom: '4',
 		}).addTo(this.map)
-		// create and add geolocation marker
-		const marker = L.marker(this.coordinates)
-		marker
-		.addTo(this.map)
+		// Users geolocation marker
+		var  userMarker= L.icon({
+			iconUrl: 'userMarker200.png',
+			shadowUrl: '',
+			iconSize:     [45, 95], 
+			shadowSize:   [50, 64], 
+			iconAnchor:   [22, 94], 
+			shadowAnchor: [4, 62],  
+			popupAnchor:  [1, -76] 
+		});
+
+		const marker = L.marker(this.coordinates, {icon: userMarker})
+		marker.addTo(this.map)
 		.bindPopup('<p1><b>You are here</b><br></p1>')
 		.openPopup()
 	},
@@ -37,6 +46,7 @@ const myMap = {
 		}
 	},
 }
+
 
 // get coordinates via geolocation api
 async function getCoords(){
@@ -55,10 +65,10 @@ async function getFoursquare(business) {
 		Authorization: 'fsq3ATzZbmcGhdeFafr73wZcnJ+LlN6bK+4dh19a7ClS4u8='
 		}
 	}
-	let limit = 5
+	let limit = 10
 	let lat = myMap.coordinates[0]
 	let lon = myMap.coordinates[1]
-	let response = await fetch(`https://api.foursquare.com/v3/places/search?&query=${business}&limit=${limit}&ll=${lat}%2C${lon}`, options)
+	let response = await fetch(`https://api.foursquare.com/v3/places/search?&query=${business}&limit=${limit}&ll=${lat}%2C${lon}`, options)   //url uses backtics so values can be added in
 	let data = await response.text()
 	let parsedData = JSON.parse(data)
 	let businesses = parsedData.results
